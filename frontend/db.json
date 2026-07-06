@@ -1,0 +1,28 @@
+{
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Configurar el entorno de desarrollo",
+      "description": "Instalar Node 24, clonar el repo y levantar el frontend con npm run dev.",
+      "completed": true,
+      "createdAt": "2026-07-01T09:00:00.000Z",
+      "updatedAt": "2026-07-01T09:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "title": "Definir el contrato de API con el equipo",
+      "description": "Acordar rutas y modelo de Task entre frontend y backend.",
+      "completed": false,
+      "createdAt": "2026-07-02T10:30:00.000Z",
+      "updatedAt": "2026-07-02T10:30:00.000Z"
+    },
+    {
+      "id": "3",
+      "title": "Diseñar el despliegue con Terraform",
+      "description": "El compañero de infra decide cómo servir el dist/ del frontend.",
+      "completed": false,
+      "createdAt": "2026-07-03T14:15:00.000Z",
+      "updatedAt": "2026-07-03T14:15:00.000Z"
+    }
+  ]
+}

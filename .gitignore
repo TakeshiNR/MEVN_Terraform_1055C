@@ -1,0 +1,22 @@
+# Dependencias
+node_modules/
+
+# Builds
+dist/
+dist-ssr/
+
+# Entorno local (los .env versionados NO llevan secretos)
+*.local
+.env.local
+
+# Terraform (para cuando infra agregue contenido)
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars.local
+
+# SO / editor
+.DS_Store
+.idea/
+*.log
