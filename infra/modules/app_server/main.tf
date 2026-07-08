@@ -57,10 +57,11 @@ data "aws_ami" "al2023" {
 }
 
 resource "aws_instance" "app_server" {
-  ami           = data.aws_ami.al2023.id
-  instance_type = var.instance_type
-  subnet_id     = var.public_subnet_id
-  key_name      = var.key_name
+  ami                         = data.aws_ami.al2023.id
+  instance_type               = var.instance_type
+  subnet_id                   = var.public_subnet_id
+  key_name                    = var.key_name
+  user_data_replace_on_change = true
 
   root_block_device {
     volume_size = 10
