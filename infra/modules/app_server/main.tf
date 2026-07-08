@@ -68,42 +68,42 @@ resource "aws_instance" "app_server" {
     volume_type = "gp3"
   }
 user_data = <<-EOF
-  #!/bin/bash
-  yum update -y
-  yum install -y nginx git
+#!/bin/bash
+yum update -y
+yum install -y nginx git
 
-  # Swap: t2.micro tiene 1GB RAM, npm install/build puede quedarse sin memoria
-  fallocate -l 1G /swapfile
-  chmod 600 /swapfile
-  mkswap /swapfile
-  swapon /swapfile
+# Swap: t2.micro tiene 1GB RAM, npm install/build puede quedarse sin memoria
+fallocate -l 1G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
 
-  # Instalar Node.js 22 (el frontend requiere ^22.18.0 || >=24.12.0)
-  curl -fsSL https://rpm.nodesource.com/setup_22.x | bash -
-  yum install -y nodejs
+# Instalar Node.js 22 (el frontend requiere ^22.18.0 || >=24.12.0)
+curl -fsSL https://rpm.nodesource.com/setup_22.x | bash -
+yum install -y nodejs
 
-  # Clonar repo (contiene backend/ y frontend/)
-  cd /home/ec2-user
-  git clone -b mongodb https://github.com/TakeshiNR/MEVN_Terraform_1055C.git
-  cd MEVN_Terraform_1055C
+# Clonar repo (contiene backend/ y frontend/)
+cd /home/ec2-user
+git clone -b mongodb https://github.com/TakeshiNR/MEVN_Terraform_1055C.git
+cd MEVN_Terraform_1055C
 
-  # Backend: API en :3000, bajo /api/tasks
-  cd backend
-  echo "PORT=3000" > .env
-  echo "MONGO_URI=mongodb://10.0.2.8:27017/gestor_tareas" >> .env
-  npm install
-  npm start &
+# Backend: API en :3000, bajo /api/tasks
+cd backend
+echo "PORT=3000" > .env
+echo "MONGO_URI=mongodb://10.0.2.8:27017/gestor_tareas" >> .env
+npm install
+npm start &
 
-  # Frontend: build estatico servido por Nginx, API relativa (mismo origen)
-  cd ../frontend
-  echo "VITE_API_URL=/api/tasks" > .env.production
-  npm install
-  npm run build
-  rm -rf /usr/share/nginx/html/*
-  cp -r dist/* /usr/share/nginx/html/
+# Frontend: build estatico servido por Nginx, API relativa (mismo origen)
+cd ../frontend
+echo "VITE_API_URL=/api/tasks" > .env.production
+npm install
+npm run build
+rm -rf /usr/share/nginx/html/*
+cp -r dist/* /usr/share/nginx/html/
 
-  # Nginx: sirve el frontend y hace proxy de /api/ al backend en localhost:3000
-  cat <<'NGINXCONF' > /etc/nginx/nginx.conf
+# Nginx: sirve el frontend y hace proxy de /api/ al backend en localhost:3000
+cat <<'NGINXCONF' > /etc/nginx/nginx.conf
 user nginx;
 worker_processes auto;
 error_log /var/log/nginx/error.log;
@@ -135,7 +135,7 @@ http {
 }
 NGINXCONF
 
-  cat <<'NGINXAPP' > /etc/nginx/conf.d/app.conf
+cat <<'NGINXAPP' > /etc/nginx/conf.d/app.conf
 server {
     listen 80 default_server;
     server_name _;
@@ -155,8 +155,8 @@ server {
 }
 NGINXAPP
 
-  systemctl enable nginx
-  systemctl restart nginx
+systemctl enable nginx
+systemctl restart nginx
 EOF
 
   vpc_security_group_ids = [aws_security_group.app_server.id]
