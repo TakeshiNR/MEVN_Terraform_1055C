@@ -9,6 +9,14 @@ resource "aws_security_group" "mongodb" {
     security_groups = [var.app_sg_id]
   }
 
+  # Temporal para diagnostico: permite SSH "jump" desde app_server hacia mongodb
+  ingress {
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [var.app_sg_id]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -21,10 +29,12 @@ resource "aws_security_group" "mongodb" {
   }
 }
 resource "aws_instance" "mongodb" {
-  ami           = "ami-0c02fb55956c7d316"
-  instance_type = var.instance_type
-  subnet_id     = var.subnet_id
-  key_name      = var.key_name
+  ami                         = "ami-0c02fb55956c7d316"
+  instance_type               = var.instance_type
+  subnet_id                   = var.subnet_id
+  key_name                    = var.key_name
+  private_ip                  = "10.0.2.8"
+  user_data_replace_on_change = true
 
   vpc_security_group_ids = [aws_security_group.mongodb.id]
 
