@@ -20,3 +20,14 @@ crash.log
 .DS_Store
 .idea/
 *.log
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfplan
+terraform.tfvars
+
+# Keys
+keys/
+*.pem
