@@ -41,19 +41,45 @@ resource "aws_security_group" "app_server" {
     Name = "${var.project_name}-app-sg"
   }
 }
+data "aws_ami" "al2023" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-2023.*-x86_64"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+}
+
 resource "aws_instance" "app_server" {
-  ami           = "ami-0c02fb55956c7d316"
+  ami           = data.aws_ami.al2023.id
   instance_type = var.instance_type
   subnet_id     = var.public_subnet_id
   key_name      = var.key_name
+
+  root_block_device {
+    volume_size = 10
+    volume_type = "gp3"
+  }
 user_data = <<-EOF
   #!/bin/bash
   yum update -y
-  amazon-linux-extras install nginx1 -y
+  yum install -y nginx git
 
-  # Instalar Node.js
-  curl -sL https://rpm.nodesource.com/setup_18.x | bash -
-  yum install -y nodejs git
+  # Swap: t2.micro tiene 1GB RAM, npm install/build puede quedarse sin memoria
+  fallocate -l 1G /swapfile
+  chmod 600 /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+
+  # Instalar Node.js 22 (el frontend requiere ^22.18.0 || >=24.12.0)
+  curl -fsSL https://rpm.nodesource.com/setup_22.x | bash -
+  yum install -y nodejs
 
   # Clonar repo (contiene backend/ y frontend/)
   cd /home/ec2-user
