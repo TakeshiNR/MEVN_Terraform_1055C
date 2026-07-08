@@ -59,7 +59,7 @@ user_data = <<-EOF
 
   # Clonar repo y correr backend
   cd /home/ec2-user
-  git clone -b backend-udl https://github.com/TakeshiNR/MEVN_Terraform_1055C.git
+  git clone -b mongodb https://github.com/TakeshiNR/MEVN_Terraform_1055C.git
   cd MEVN_Terraform_1055C/backend
   echo "PORT=3000" > .env
   echo "MONGO_URI=mongodb://10.0.2.8:27017/gestor_tareas" >> .env
