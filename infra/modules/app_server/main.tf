@@ -92,7 +92,27 @@ cd backend
 echo "PORT=3000" > .env
 echo "MONGO_URI=mongodb://10.0.2.8:27017/gestor_tareas" >> .env
 npm install
-npm start &
+
+# Correr como servicio systemd propio: si se lanza con "&" el proceso muere
+# cuando cloud-final.service termina (systemd mata todo el cgroup del user_data).
+cat <<'BACKENDSERVICE' > /etc/systemd/system/backend.service
+[Unit]
+Description=Backend Node API
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ec2-user/MEVN_Terraform_1055C/backend
+ExecStart=/usr/bin/node src/server.js
+Restart=on-failure
+User=ec2-user
+
+[Install]
+WantedBy=multi-user.target
+BACKENDSERVICE
+
+systemctl daemon-reload
+systemctl enable --now backend
 
 # Frontend: build estatico servido por Nginx, API relativa (mismo origen)
 cd ../frontend
