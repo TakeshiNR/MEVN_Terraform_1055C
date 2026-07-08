@@ -9,14 +9,6 @@ resource "aws_security_group" "mongodb" {
     security_groups = [var.app_sg_id]
   }
 
-  # Temporal para diagnostico: permite SSH "jump" desde app_server hacia mongodb
-  ingress {
-    from_port       = 22
-    to_port         = 22
-    protocol        = "tcp"
-    security_groups = [var.app_sg_id]
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
