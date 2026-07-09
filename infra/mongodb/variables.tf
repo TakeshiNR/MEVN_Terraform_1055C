@@ -1,6 +1,5 @@
 variable "ami_id" {
-  description = "AMI para la instancia MongoDB (Amazon Linux 2, con repo yum de MongoDB 6.0)"
-  default     = "ami-0c02fb55956c7d316"
+  description = "AMI para la instancia MongoDB (debe ser Amazon Linux 2: el user_data usa el repo yum de MongoDB especifico de amzn2). Sin default: el root module siempre resuelve una AMI valida via data.aws_ami."
 }
 
 variable "vpc_id" {

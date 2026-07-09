@@ -27,6 +27,19 @@ data "aws_ami" "amazon_linux_2023" {
   }
 }
 
+# AMI publica por defecto para MongoDB. Va en Amazon Linux 2 (no 2023): el
+# script de arranque de ./mongodb instala el repo yum "mongodb-org-6.0" para
+# "amazon/2" especificamente, que no es compatible con AL2023.
+data "aws_ami" "amazon_linux_2" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+
 # -----------------------------------------------------------------------------
 # 1) Red
 # -----------------------------------------------------------------------------
@@ -64,7 +77,7 @@ module "mongodb" {
   vpc_id        = module.networking.vpc_id
   subnet_id     = values(module.networking.db_subnet_ids)[0]
   app_sg_id     = module.security_groups.backend_sg_id
-  ami_id        = var.db_ami_id
+  ami_id        = coalesce(var.db_ami_id, data.aws_ami.amazon_linux_2.id)
   instance_type = var.instance_type
   key_name      = var.key_name
 }
@@ -87,13 +100,14 @@ module "backend_instances" {
   associate_public_ip       = false
   iam_instance_profile_name = aws_iam_instance_profile.app_instance.name
   user_data = templatefile("${path.module}/scripts/backend-user-data.sh.tpl", {
-    aws_region   = var.aws_region
-    s3_bucket    = aws_s3_bucket.artifacts.id
-    s3_key       = local.backend_built ? aws_s3_object.backend[0].key : ""
-    backend_port = var.backend_port
-    mongo_host   = module.mongodb.private_ip
-    mongo_port   = var.mongo_port
-    mongo_db     = var.mongo_db_name
+    aws_region    = var.aws_region
+    s3_bucket     = aws_s3_bucket.artifacts.id
+    s3_key        = local.backend_built ? aws_s3_object.backend[0].key : ""
+    artifact_hash = local.backend_built ? data.archive_file.backend[0].output_md5 : "none"
+    backend_port  = var.backend_port
+    mongo_host    = module.mongodb.private_ip
+    mongo_port    = var.mongo_port
+    mongo_db      = var.mongo_db_name
   })
 }
 
@@ -111,11 +125,12 @@ module "web_instances" {
   associate_public_ip       = false # el trafico entra siempre por el ALB
   iam_instance_profile_name = aws_iam_instance_profile.app_instance.name
   user_data = templatefile("${path.module}/scripts/web-user-data.sh.tpl", {
-    aws_region   = var.aws_region
-    s3_bucket    = aws_s3_bucket.artifacts.id
-    s3_key       = local.frontend_built ? aws_s3_object.frontend[0].key : ""
-    backend_ips  = values(module.backend_instances.private_ips)
-    backend_port = var.backend_port
+    aws_region    = var.aws_region
+    s3_bucket     = aws_s3_bucket.artifacts.id
+    s3_key        = local.frontend_built ? aws_s3_object.frontend[0].key : ""
+    artifact_hash = local.frontend_built ? data.archive_file.frontend[0].output_md5 : "none"
+    backend_ips   = values(module.backend_instances.private_ips)
+    backend_port  = var.backend_port
   })
 }
 

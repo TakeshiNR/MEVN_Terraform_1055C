@@ -33,6 +33,10 @@ resource "aws_instance" "this" {
   associate_public_ip_address = var.associate_public_ip
   iam_instance_profile        = var.iam_instance_profile_name
   user_data                   = var.user_data
+  # AWS no vuelve a ejecutar el user_data en una instancia ya arrancada; sin
+  # esto, cambiar el script (o el contenido del artefacto S3, via el hash que
+  # main.tf inyecta en el template) no tendria efecto hasta un reemplazo.
+  user_data_replace_on_change = true
 
   root_block_device {
     volume_size = var.volume_size

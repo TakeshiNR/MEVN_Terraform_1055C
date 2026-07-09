@@ -1,6 +1,9 @@
 #!/bin/bash
 # =============================================================================
 # Arranque de la capa WEB (Vue compilado, servido por Nginx).
+# artifact-hash: ${artifact_hash}  (cambia cuando cambia frontend.zip -> fuerza
+# reemplazo de la instancia via user_data_replace_on_change, ver compute/main.tf)
+#
 # Descarga el build (frontend/dist empaquetado) desde S3 -no hay git clone- y
 # configura Nginx para servir los estaticos y proxyar /api/ hacia la capa
 # backend (asi coincide con VITE_API_URL=/api/tasks de frontend/.env.production).
@@ -31,7 +34,10 @@ server {
     index index.html;
 
     location /api/ {
-        proxy_pass http://backend_api/;
+        # Sin barra final en el destino: nginx reenvia la URI original tal
+        # cual (incluido el prefijo /api/), porque el backend monta sus
+        # rutas en app.use('/api/tasks', ...), no en '/tasks'.
+        proxy_pass http://backend_api;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

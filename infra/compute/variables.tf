@@ -53,7 +53,7 @@ variable "user_data" {
 }
 
 variable "volume_size" {
-  description = "Tamaño en GB del disco raiz"
+  description = "Tamaño en GB del disco raiz (la AMI Amazon Linux 2023 por defecto exige >= 30GB por el tamaño de su snapshot base)"
   type        = number
-  default     = 20
+  default     = 30
 }

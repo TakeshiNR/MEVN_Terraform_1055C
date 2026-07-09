@@ -100,9 +100,9 @@ variable "backend_ami_id" {
 }
 
 variable "db_ami_id" {
-  description = "AMI para la instancia MongoDB (ver default en modules/mongodb/variables.tf)"
+  description = "AMI para la instancia MongoDB. null = usar la ultima Amazon Linux 2 publica (requerida por el repo yum de MongoDB que usa ./mongodb)"
   type        = string
-  default     = "ami-0c02fb55956c7d316"
+  default     = null
 }
 
 variable "instance_type" {
@@ -124,7 +124,7 @@ variable "mongo_port" {
 }
 
 variable "mongo_db_name" {
-  description = "Nombre de la base de datos Mongo que usara el backend"
+  description = "Nombre de la base de datos Mongo que usara el backend (coincide con backend/.env.example)"
   type        = string
-  default     = "mevn_tasks"
+  default     = "gestor_tareas"
 }

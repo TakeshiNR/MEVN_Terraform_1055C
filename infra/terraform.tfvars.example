@@ -24,7 +24,7 @@ instance_type = "t2.micro"
 # -----------------------------------------------------------------------------
 # Antes de "terraform apply":
 #   1) cd ../frontend && npm install && npm run build   (genera frontend/dist)
-#   2) el equipo de backend debe tener backend/package.json listo
-#      (mientras no exista, esa capa arranca sin desplegar codigo)
+#   2) backend/ ya trae su codigo (Express + Mongoose); no requiere build,
+#      solo "package.json" con "start" -> node src/server.js (ya existe)
 #   3) cd infra && terraform init && terraform plan && terraform apply
 # =============================================================================
