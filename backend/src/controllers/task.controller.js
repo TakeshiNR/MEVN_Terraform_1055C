@@ -13,6 +13,25 @@ const getTasks = async (req, res, next) => {
 };
 
 /**
+ * Get a single task by id.
+ */
+const getTask = async (req, res, next) => {
+  try {
+    const task = await Task.findById(req.params.id);
+
+    if (!task) {
+      return res.status(404).json({
+        message: 'Task not found',
+      });
+    }
+
+    res.status(200).json(task);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * Create a new task.
  */
 const createTask = async (req, res, next) => {
@@ -80,6 +99,7 @@ const deleteTask = async (req, res, next) => {
 
 module.exports = {
   getTasks,
+  getTask,
   createTask,
   updateTask,
   deleteTask,
