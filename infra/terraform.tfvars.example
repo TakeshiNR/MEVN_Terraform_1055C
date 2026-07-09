@@ -1,0 +1,30 @@
+# =============================================================================
+# Copia este archivo como "terraform.tfvars" (dentro de infra/) y rellena tus
+# valores reales. NO subas terraform.tfvars a git si contiene datos sensibles.
+# =============================================================================
+
+aws_region   = "us-west-1"
+project_name = "mevn-tasks"
+
+# IP publica de TU maquina en formato CIDR (obten la tuya con: curl ifconfig.me)
+admin_cidr = "TU_IP_PUBLICA/32"
+
+# Key pair EXISTENTE en la region us-west-1 (recuerda: los key pairs son
+# especificos de cada region; crealo antes si no lo tienes).
+key_name = "mevn-tasks-keypair"
+
+instance_type = "t2.micro"
+
+# Deja web_ami_id / backend_ami_id sin definir (o en null) para usar
+# automaticamente la ultima Amazon Linux 2023 publica. Solo sobreescribelas
+# si generas tu propia AMI (p.ej. con Packer).
+# web_ami_id     = "ami-XXXXXXXXXXXXXXXXX"
+# backend_ami_id = "ami-XXXXXXXXXXXXXXXXX"
+
+# -----------------------------------------------------------------------------
+# Antes de "terraform apply":
+#   1) cd ../frontend && npm install && npm run build   (genera frontend/dist)
+#   2) backend/ ya trae su codigo (Express + Mongoose); no requiere build,
+#      solo "package.json" con "start" -> node src/server.js (ya existe)
+#   3) cd infra && terraform init && terraform plan && terraform apply
+# =============================================================================

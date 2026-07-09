@@ -21,7 +21,7 @@ resource "aws_security_group" "mongodb" {
   }
 }
 resource "aws_instance" "mongodb" {
-  ami           = "ami-0c02fb55956c7d316"
+  ami           = var.ami_id
   instance_type = var.instance_type
   subnet_id     = var.subnet_id
   key_name      = var.key_name
