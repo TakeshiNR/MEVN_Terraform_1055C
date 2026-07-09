@@ -1,3 +1,8 @@
+variable "ami_id" {
+  description = "AMI para la instancia MongoDB (Amazon Linux 2, con repo yum de MongoDB 6.0)"
+  default     = "ami-0c02fb55956c7d316"
+}
+
 variable "vpc_id" {
   description = "ID de la VPC principal"
 }
